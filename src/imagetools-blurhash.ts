@@ -2,8 +2,11 @@ import { setMetadata, getMetadata, TransformFactory } from 'vite-imagetools';
 import { encode } from 'blurhash';
 
 export interface BlurhashOptions {
-  blurhash: '' | 'true' | number | [number, number] | string;
+  blurhash?: '' | 'true' | number | [number, number] | string;
 }
+
+// Helper type to bypass ImageConfig intersection
+type BlurhashTransformFactory = (options: BlurhashOptions, ctx?: any) => ReturnType<TransformFactory<any>>;
 
 export interface BlurhashConfig {
   always?: boolean;
@@ -49,8 +52,12 @@ function parseBlurhashComponents(components: number | [number, number] | string)
  * @param defaultConfig - Default configuration options for blurhash generation
  * @returns A transform factory function that can be used with vite-imagetools
  */
-export function blurhash(defaultConfig: BlurhashConfig = {}): TransformFactory<BlurhashOptions> {
-  return ({ blurhash }) => {
+export function blurhash(defaultConfig: BlurhashConfig = {}): BlurhashTransformFactory {
+  return ((options: BlurhashOptions) => {
+    // Convert numbers to strings for compatibility
+    const blurhash = typeof options.blurhash === 'number' 
+      ? `${options.blurhash},${options.blurhash}` 
+      : options.blurhash;
     // Merge user options with defaults
     const finalBlurhash = blurhash ?? (defaultConfig.always ? 'true' : '');
     
@@ -118,5 +125,5 @@ export function blurhash(defaultConfig: BlurhashConfig = {}): TransformFactory<B
 
       return image;
     };
-  };
+  });
 }
