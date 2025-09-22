@@ -73,6 +73,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
       
     - name: Setup pnpm
       uses: pnpm/action-setup@v4.1.0
@@ -110,7 +112,7 @@ jobs:
       run: pnpm run build
       
     - name: Publish to NPM
-      run: pnpm publish
+      run: pnpm publish --no-git-checks
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
