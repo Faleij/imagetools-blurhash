@@ -51,7 +51,7 @@ jobs:
         cache: 'pnpm'
         
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
       
     - name: Type check
       run: pnpm run type-check
@@ -105,15 +105,23 @@ jobs:
       with:
         node-version: '24'
         cache: 'pnpm'
+        registry-url: https://registry.npmjs.org
         
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
       
     - name: Build
       run: pnpm run build
       
+    - name: Debug - Check environment
+      run: |
+        echo "NODE_AUTH_TOKEN exists: ${{ secrets.NPM_TOKEN != '' }}"
+        echo "Git branch: $(git branch --show-current)"
+        echo "Git status: $(git status --porcelain)"
+        
     - name: Publish to NPM
-      run: pnpm publish --no-git-checks
+      run: pnpm publish --access public --no-git-checks
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
