@@ -1,0 +1,83 @@
+{
+  "name": "imagetools-blurhash",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A Vite imagetools plugin for generating blurhash placeholders from images",
+  "main": "dist/cjs/imagetools-blurhash.cjs",
+  "module": "dist/esm/imagetools-blurhash.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/imagetools-blurhash.d.ts",
+        "default": "./dist/esm/imagetools-blurhash.js"
+      },
+      "require": {
+        "types": "./dist/types/imagetools-blurhash.d.ts",
+        "default": "./dist/cjs/imagetools-blurhash.cjs"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./dist/types/image-tools.d.ts"
+      },
+      "require": {
+        "types": "./dist/types/image-tools.d.ts"
+      }
+    }
+  },
+  "types": "dist/types/imagetools-blurhash.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
+    "build:cjs": "tsc -p tsconfig.cjs.json && mv dist/cjs/imagetools-blurhash.js dist/cjs/imagetools-blurhash.cjs && mv dist/cjs/imagetools-blurhash.js.map dist/cjs/imagetools-blurhash.cjs.map",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:esm:watch": "tsc -p tsconfig.esm.json --watch",
+    "build:types": "tsc -p tsconfig.types.json && npm run copy:types",
+    "copy:types": "cp dist-types/* dist/types/",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "vite",
+    "imagetools",
+    "blurhash",
+    "image",
+    "placeholder",
+    "optimization"
+  ],
+  "author": "Faleij <faleij@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faleij/imagetools-blurhash.git"
+  },
+  "bugs": {
+    "url": "https://github.com/faleij/imagetools-blurhash/issues"
+  },
+  "homepage": "https://github.com/faleij/imagetools-blurhash#readme",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.0.0",
+    "vite-imagetools": "^8.0.0"
+  },
+  "dependencies": {
+    "blurhash": "^2.0.1"
+  },
+  "peerDependencies": {
+    "vite": "^7.0.0",
+    "vite-imagetools": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
