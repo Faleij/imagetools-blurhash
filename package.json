@@ -1,6 +1,6 @@
 {
   "name": "imagetools-blurhash",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A Vite imagetools plugin for generating blurhash placeholders from images",
   "main": "dist/cjs/imagetools-blurhash.cjs",
