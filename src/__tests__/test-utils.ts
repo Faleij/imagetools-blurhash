@@ -1,9 +1,16 @@
 import { vi } from 'vitest'
 
+// Mock image interface for testing
+interface MockImage {
+  metadata: ReturnType<typeof vi.fn>
+  clone: ReturnType<typeof vi.fn>
+  path: string
+}
+
 /**
  * Creates a mock image object for testing
  */
-export function createMockImage(width: number, height: number, path = '/test/image.jpg') {
+export function createMockImage(width: number, height: number, path = '/test/image.jpg'): MockImage {
   const mockResizedImage = {
     ensureAlpha: vi.fn().mockReturnThis(),
     raw: vi.fn().mockReturnThis(),
@@ -22,7 +29,7 @@ export function createMockImage(width: number, height: number, path = '/test/ima
       resize: vi.fn().mockReturnValue(mockResizedImage)
     }),
     path
-  } as any // Type assertion to avoid Sharp interface requirements
+  }
 }
 
 /**

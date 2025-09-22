@@ -1,6 +1,23 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { blurhash, type BlurhashOptions, type BlurhashConfig } from '../imagetools-blurhash'
+import { blurhash, type BlurhashOptions } from '../imagetools-blurhash'
 import { setMetadata, getMetadata } from 'vite-imagetools'
+
+// Mock image and metadata types for testing
+interface MockImage {
+  metadata: ReturnType<typeof vi.fn>
+  clone: ReturnType<typeof vi.fn>
+  resize: ReturnType<typeof vi.fn>
+  ensureAlpha: ReturnType<typeof vi.fn>
+  raw: ReturnType<typeof vi.fn>
+  toBuffer: ReturnType<typeof vi.fn>
+  path: string
+}
+
+interface MockMetadata {
+  width?: number
+  height?: number
+  path?: string
+}
 
 // Mock vite-imagetools
 vi.mock('vite-imagetools', () => ({
@@ -15,10 +32,8 @@ vi.mock('blurhash', () => ({
 }))
 
 // Mock console methods
-const consoleSpy = {
-  log: vi.spyOn(console, 'log').mockImplementation(() => {}),
-  warn: vi.spyOn(console, 'warn').mockImplementation(() => {})
-}
+vi.spyOn(console, 'log').mockImplementation(() => {})
+vi.spyOn(console, 'warn').mockImplementation(() => {})
 
 describe('blurhash plugin', () => {
   beforeEach(() => {
@@ -38,7 +53,7 @@ describe('blurhash plugin', () => {
 
     it('should return undefined when blurhash is false', () => {
       const factory = blurhash()
-      const result = factory({ blurhash: 'false' as any }, {} as any)
+      const result = factory({ blurhash: 'false' }, {} as any)
       expect(result).toBeUndefined()
     })
 
@@ -74,17 +89,17 @@ describe('blurhash plugin', () => {
 
     it('should not generate blurhash when always is false and user explicitly disables', () => {
       const factory = blurhash({ always: false })
-      const result = factory({ blurhash: 'false' as any }, {} as any)
+      const result = factory({ blurhash: 'false' }, {} as any)
       expect(result).toBeUndefined()
     })
 
   })
 
   describe('transform function', () => {
-    let mockImage: any
-    let mockMetadata: any
-    let mockResizedImage: any
-    let mockBuffer: any
+    let mockImage: MockImage
+    let mockMetadata: MockMetadata
+    let mockResizedImage: MockImage
+    let mockBuffer: { data: Buffer; info: { width: number; height: number } }
 
     beforeEach(() => {
       // Mock image object
@@ -94,7 +109,8 @@ describe('blurhash plugin', () => {
         resize: vi.fn(),
         ensureAlpha: vi.fn(),
         raw: vi.fn(),
-        toBuffer: vi.fn()
+        toBuffer: vi.fn(),
+        path: '/test/image.jpg'
       }
 
       // Mock metadata
@@ -105,15 +121,18 @@ describe('blurhash plugin', () => {
 
       // Mock resized image
       mockResizedImage = {
+        metadata: vi.fn(),
+        clone: vi.fn(),
         resize: vi.fn(),
         ensureAlpha: vi.fn(),
         raw: vi.fn(),
-        toBuffer: vi.fn()
+        toBuffer: vi.fn(),
+        path: '/test/image.jpg'
       }
 
       // Mock buffer data
       mockBuffer = {
-        data: new Uint8Array(800), // 100 * 50 * 4 (RGBA)
+        data: Buffer.from(new Uint8Array(800)), // 100 * 50 * 4 (RGBA)
         info: {
           width: 32,
           height: 16
@@ -141,7 +160,7 @@ describe('blurhash plugin', () => {
       const transform = factory({ blurhash: 'true' }, {} as any)
       expect(transform).toBeDefined()
 
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(mockImage.metadata).toHaveBeenCalled()
       expect(mockImage.clone).toHaveBeenCalled()
@@ -164,7 +183,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       // Should return the original image without processing
       expect(result).toBe(mockImage)
@@ -181,7 +200,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       // Should return the original image without processing
       expect(result).toBe(mockImage)
@@ -198,7 +217,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(mockResizedImage.resize).toHaveBeenCalledWith(1, 1, { kernel: 'nearest' })
     })
@@ -213,7 +232,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       // Should resize to max 32x32
       expect(mockResizedImage.resize).toHaveBeenCalledWith(32, 16, { kernel: 'nearest' })
@@ -229,7 +248,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(mockResizedImage.resize).toHaveBeenCalledWith(32, 32, { kernel: 'nearest' })
     })
@@ -244,7 +263,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(mockResizedImage.resize).toHaveBeenCalledWith(8, 32, { kernel: 'nearest' })
     })
@@ -259,7 +278,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(mockResizedImage.resize).toHaveBeenCalledWith(32, 8, { kernel: 'nearest' })
     })
@@ -274,7 +293,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(mockResizedImage.resize).toHaveBeenCalledWith(1, 1, { kernel: 'nearest' })
     })
@@ -288,7 +307,7 @@ describe('blurhash plugin', () => {
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Encode failed')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Encode failed')
     })
 
     it('should handle image processing errors gracefully', async () => {
@@ -297,7 +316,7 @@ describe('blurhash plugin', () => {
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Metadata failed')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Metadata failed')
     })
   })
 
@@ -325,10 +344,10 @@ describe('blurhash plugin', () => {
   })
 
   describe('blurhash argument parsing', () => {
-    let mockImage: any
-    let mockMetadata: any
-    let mockResizedImage: any
-    let mockBuffer: any
+    let mockImage: MockImage
+    let mockMetadata: MockMetadata
+    let mockResizedImage: MockImage
+    let mockBuffer: { data: Buffer; info: { width: number; height: number } }
 
     beforeEach(() => {
       // Mock image object
@@ -338,7 +357,8 @@ describe('blurhash plugin', () => {
         resize: vi.fn(),
         ensureAlpha: vi.fn(),
         raw: vi.fn(),
-        toBuffer: vi.fn()
+        toBuffer: vi.fn(),
+        path: '/test/image.jpg'
       }
 
       // Mock metadata
@@ -349,15 +369,18 @@ describe('blurhash plugin', () => {
 
       // Mock resized image
       mockResizedImage = {
+        metadata: vi.fn(),
+        clone: vi.fn(),
         resize: vi.fn(),
         ensureAlpha: vi.fn(),
         raw: vi.fn(),
-        toBuffer: vi.fn()
+        toBuffer: vi.fn(),
+        path: '/test/image.jpg'
       }
 
       // Mock buffer data
       mockBuffer = {
-        data: new Uint8Array(800), // 100 * 50 * 4 (RGBA)
+        data: Buffer.from(new Uint8Array(800)), // 100 * 50 * 4 (RGBA)
         info: {
           width: 32,
           height: 16
@@ -382,8 +405,8 @@ describe('blurhash plugin', () => {
       vi.mocked(encode).mockReturnValue(mockBlurhash)
 
       const factory = blurhash()
-      const transform = factory({ blurhash: 6 } as any, {} as any)
-      await transform!(mockImage)
+      const transform = factory({ blurhash: 6 }, {} as any)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 6, 6)
     })
@@ -394,8 +417,8 @@ describe('blurhash plugin', () => {
       vi.mocked(encode).mockReturnValue(mockBlurhash)
 
       const factory = blurhash()
-      const transform = factory({ blurhash: '5,2' } as any, {} as any)
-      await transform!(mockImage)
+      const transform = factory({ blurhash: '5,2' }, {} as any)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 5, 2)
     })
@@ -406,8 +429,8 @@ describe('blurhash plugin', () => {
       vi.mocked(encode).mockReturnValue(mockBlurhash)
 
       const factory = blurhash()
-      const transform = factory({ blurhash: '3 4' } as any, {} as any)
-      await transform!(mockImage)
+      const transform = factory({ blurhash: '3 4' }, {} as any)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 3, 4)
     })
@@ -418,8 +441,8 @@ describe('blurhash plugin', () => {
       vi.mocked(encode).mockReturnValue(mockBlurhash)
 
       const factory = blurhash()
-      const transform = factory({ blurhash: '2-5' } as any, {} as any)
-      await transform!(mockImage)
+      const transform = factory({ blurhash: '2-5' }, {} as any)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 2, 5)
     })
@@ -430,8 +453,8 @@ describe('blurhash plugin', () => {
       vi.mocked(encode).mockReturnValue(mockBlurhash)
 
       const factory = blurhash()
-      const transform = factory({ blurhash: ' 3 , 2 ' } as any, {} as any)
-      await transform!(mockImage)
+      const transform = factory({ blurhash: ' 3 , 2 ' }, {} as any)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 3, 2)
     })
@@ -439,7 +462,7 @@ describe('blurhash plugin', () => {
     it('should throw error for invalid string format', () => {
       expect(() => {
         const factory = blurhash()
-        factory({ blurhash: 'invalid' } as any, {} as any)
+        factory({ blurhash: 'invalid' }, {} as any)
       }).toThrow('Invalid blurhashComponents string format: "invalid". Expected format: "x,y" or "x y" or "x-y"')
     })
 
@@ -450,7 +473,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash()
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 4, 4)
     })
@@ -462,7 +485,7 @@ describe('blurhash plugin', () => {
 
       const factory = blurhash({ components: 6 })
       const transform = factory({ blurhash: 'true' }, {} as any)
-      await transform!(mockImage)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 6, 6)
     })
@@ -473,8 +496,8 @@ describe('blurhash plugin', () => {
       vi.mocked(encode).mockReturnValue(mockBlurhash)
 
       const factory = blurhash({ components: 6 })
-      const transform = factory({ blurhash: 3 } as any, {} as any)
-      await transform!(mockImage)
+      const transform = factory({ blurhash: 3 }, {} as any)
+      await transform!(mockImage as any)
 
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 3, 3)
     })

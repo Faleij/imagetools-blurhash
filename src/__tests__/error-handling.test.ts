@@ -3,6 +3,13 @@ import { blurhash } from '../imagetools-blurhash'
 import { setMetadata, getMetadata } from 'vite-imagetools'
 import { createMockImage, mockConsole } from './test-utils'
 
+// Mock image interface for testing (unused but kept for consistency)
+// interface MockImage {
+//   metadata: ReturnType<typeof vi.fn>
+//   clone: ReturnType<typeof vi.fn>
+//   path: string
+// }
+
 // Mock vite-imagetools
 vi.mock('vite-imagetools', () => ({
   setMetadata: vi.fn(),
@@ -15,11 +22,9 @@ vi.mock('blurhash', () => ({
 }))
 
 describe('blurhash error handling', () => {
-  let consoleSpy: ReturnType<typeof mockConsole>
-
   beforeEach(() => {
     vi.clearAllMocks()
-    consoleSpy = mockConsole()
+    mockConsole()
   })
 
   describe('image processing errors', () => {
@@ -30,7 +35,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to get metadata')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to get metadata')
     })
 
     it('should handle image cloning errors', async () => {
@@ -42,7 +47,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to clone image')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to clone image')
     })
 
     it('should handle image resizing errors', async () => {
@@ -57,7 +62,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to resize image')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to resize image')
     })
 
     it('should handle alpha channel errors', async () => {
@@ -73,7 +78,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to ensure alpha channel')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to ensure alpha channel')
     })
 
     it('should handle raw data conversion errors', async () => {
@@ -90,7 +95,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to convert to raw data')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to convert to raw data')
     })
 
     it('should handle buffer conversion errors', async () => {
@@ -106,7 +111,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to convert to buffer')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to convert to buffer')
     })
   })
 
@@ -121,7 +126,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Blurhash encoding failed')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Blurhash encoding failed')
     })
 
     it('should handle invalid pixel data', async () => {
@@ -134,7 +139,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Invalid pixel data')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Invalid pixel data')
     })
 
     it('should handle encoding with invalid dimensions', async () => {
@@ -147,7 +152,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Invalid dimensions for encoding')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Invalid dimensions for encoding')
     })
   })
 
@@ -163,7 +168,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to set metadata')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to set metadata')
     })
 
     it('should handle getMetadata errors gracefully', async () => {
@@ -176,7 +181,7 @@ describe('blurhash error handling', () => {
       const transform = factory({ blurhash: 'true' }, {} as any)
       
       // Should throw the error from getMetadata
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to get metadata')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to get metadata')
     })
   })
 
@@ -214,7 +219,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow()
+      await expect(transform!(mockImage as any)).rejects.toThrow()
     })
 
     it('should handle image with undefined dimensions', async () => {
@@ -224,7 +229,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow()
+      await expect(transform!(mockImage as any)).rejects.toThrow()
     })
   })
 
@@ -239,7 +244,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Memory allocation failed')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Memory allocation failed')
     })
 
     it('should handle images with extreme aspect ratios', async () => {
@@ -252,7 +257,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Invalid aspect ratio')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Invalid aspect ratio')
     })
 
     it('should handle corrupted image data', async () => {
@@ -271,7 +276,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow()
+      await expect(transform!(mockImage as any)).rejects.toThrow()
     })
   })
 
@@ -286,7 +291,7 @@ describe('blurhash error handling', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      await expect(transform!(mockImage)).rejects.toThrow('Blurhash generation failed')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Blurhash generation failed')
     })
 
     it('should handle partial failures gracefully', async () => {
@@ -298,14 +303,14 @@ describe('blurhash error handling', () => {
       const { encode } = await import('blurhash')
       vi.mocked(encode).mockReturnValue('L6PZfSi_.AyE_3t7t7R**0o#DgR4')
       vi.mocked(setMetadata).mockImplementation(() => {}) // First call succeeds
-      const result1 = await transform!(mockImage)
+      const result1 = await transform!(mockImage as any)
       expect(result1).toBe(mockImage)
 
       // Second call fails from setMetadata
       vi.mocked(setMetadata).mockImplementation(() => {
         throw new Error('Failed to set metadata')
       })
-      await expect(transform!(mockImage)).rejects.toThrow('Failed to set metadata')
+      await expect(transform!(mockImage as any)).rejects.toThrow('Failed to set metadata')
     })
   })
 })

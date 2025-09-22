@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { blurhash } from '../imagetools-blurhash'
-import { setMetadata, getMetadata } from 'vite-imagetools'
+// Mock vite-imagetools functions are imported but not used directly in this test
 import { createMockImage, PerformanceTestUtils, testImageScenarios } from './test-utils'
+
+// Mock image interface for testing (unused but kept for consistency)
+// interface MockImage {
+//   metadata: ReturnType<typeof vi.fn>
+//   clone: ReturnType<typeof vi.fn>
+//   path: string
+// }
 
 // Mock vite-imagetools
 vi.mock('vite-imagetools', () => ({
@@ -29,7 +36,7 @@ describe('blurhash performance tests', () => {
       const transform = factory({ blurhash: 'true' }, {} as any)
       
       const { time } = await PerformanceTestUtils.measureTime(async () => {
-        await transform!(mockImage)
+        await transform!(mockImage as any)
       })
       
       expect(time).toBeLessThan(100) // Should be very fast for small images
@@ -44,7 +51,7 @@ describe('blurhash performance tests', () => {
       const transform = factory({ blurhash: 'true' }, {} as any)
       
       const { time } = await PerformanceTestUtils.measureTime(async () => {
-        await transform!(mockImage)
+        await transform!(mockImage as any)
       })
       
       expect(time).toBeLessThan(500) // Should be reasonable for medium images
@@ -59,7 +66,7 @@ describe('blurhash performance tests', () => {
       const transform = factory({ blurhash: 'true' }, {} as any)
       
       const { time } = await PerformanceTestUtils.measureTime(async () => {
-        await transform!(mockImage)
+        await transform!(mockImage as any)
       })
       
       expect(time).toBeLessThan(1000) // Should be acceptable for large images
@@ -79,7 +86,7 @@ describe('blurhash performance tests', () => {
 
       const { averageTime } = await PerformanceTestUtils.measureMultiple(
         async () => {
-          await Promise.all(images.map(image => transform!(image)))
+          await Promise.all(images.map(image => transform!(image as any)))
         },
         5
       )
@@ -102,7 +109,7 @@ describe('blurhash performance tests', () => {
 
       const { averageTime } = await PerformanceTestUtils.measureMultiple(
         async () => {
-          await Promise.all(images.map(image => transform!(image)))
+          await Promise.all(images.map(image => transform!(image as any)))
         },
         3
       )
@@ -122,7 +129,7 @@ describe('blurhash performance tests', () => {
 
       // Process the same image multiple times
       for (let i = 0; i < 100; i++) {
-        await transform!(mockImage)
+        await transform!(mockImage as any)
       }
 
       // If we get here without memory issues, the test passes
@@ -140,7 +147,7 @@ describe('blurhash performance tests', () => {
       )
 
       // Process all images concurrently
-      await Promise.all(images.map(image => transform!(image)))
+      await Promise.all(images.map(image => transform!(image as any)))
 
       // If we get here without memory issues, the test passes
       expect(true).toBe(true)
@@ -158,7 +165,7 @@ describe('blurhash performance tests', () => {
       for (const scenario of testImageScenarios.web) {
         const mockImage = createMockImage(scenario.width, scenario.height)
         const { time } = await PerformanceTestUtils.measureTime(async () => {
-          await transform!(mockImage)
+          await transform!(mockImage as any)
         })
         
         expect(time).toBeLessThan(300) // Should be fast for web images
@@ -175,7 +182,7 @@ describe('blurhash performance tests', () => {
       for (const scenario of testImageScenarios.mobile) {
         const mockImage = createMockImage(scenario.width, scenario.height)
         const { time } = await PerformanceTestUtils.measureTime(async () => {
-          await transform!(mockImage)
+          await transform!(mockImage as any)
         })
         
         expect(time).toBeLessThan(200) // Should be fast for mobile images
@@ -192,7 +199,7 @@ describe('blurhash performance tests', () => {
       for (const scenario of testImageScenarios.square) {
         const mockImage = createMockImage(scenario.width, scenario.height)
         const { time } = await PerformanceTestUtils.measureTime(async () => {
-          await transform!(mockImage)
+          await transform!(mockImage as any)
         })
         
         expect(time).toBeLessThan(250) // Should be fast for square images
@@ -210,7 +217,7 @@ describe('blurhash performance tests', () => {
       const mockImage = createMockImage(1, 1)
       
       const { time } = await PerformanceTestUtils.measureTime(async () => {
-        await transform!(mockImage)
+        await transform!(mockImage as any)
       })
       
       expect(time).toBeLessThan(50) // Should be very fast for 1x1 images
@@ -225,7 +232,7 @@ describe('blurhash performance tests', () => {
       const mockImage = createMockImage(8000, 6000)
       
       const { time } = await PerformanceTestUtils.measureTime(async () => {
-        await transform!(mockImage)
+        await transform!(mockImage as any)
       })
       
       expect(time).toBeLessThan(1000) // Should be reasonable for very large images
@@ -245,7 +252,7 @@ describe('blurhash performance tests', () => {
 
       const { averageTime } = await PerformanceTestUtils.measureMultiple(
         async () => {
-          await Promise.all(images.map(image => transform!(image)))
+          await Promise.all(images.map(image => transform!(image as any)))
         },
         3
       )

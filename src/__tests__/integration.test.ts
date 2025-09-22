@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { blurhash } from '../imagetools-blurhash'
-import { setMetadata, getMetadata } from 'vite-imagetools'
+import { setMetadata } from 'vite-imagetools'
 import { createMockImage } from './test-utils'
+
+// Mock image interface for testing (unused but kept for consistency)
+// interface MockImage {
+//   metadata: ReturnType<typeof vi.fn>
+//   clone: ReturnType<typeof vi.fn>
+//   path: string
+// }
 
 // Mock vite-imagetools
 vi.mock('vite-imagetools', () => ({
@@ -30,7 +37,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -46,7 +53,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -62,7 +69,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -78,7 +85,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -94,7 +101,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -110,7 +117,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -127,7 +134,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -143,7 +150,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -159,7 +166,7 @@ describe('blurhash integration tests', () => {
       const factory = blurhash({ components: [4, 4] })
       const transform = factory({ blurhash: 'true' }, {} as any)
       
-      const result = await transform!(mockImage)
+      const result = await transform!(mockImage as any)
 
       expect(result).toBe(mockImage)
       expect(setMetadata).toHaveBeenCalledWith(mockImage, 'blurhash', mockBlurhash)
@@ -181,7 +188,7 @@ describe('blurhash integration tests', () => {
       ]
 
       const results = await Promise.all(
-        images.map(image => transform!(image))
+        images.map(image => transform!(image as any))
       )
 
       expect(results).toHaveLength(3)
@@ -200,7 +207,7 @@ describe('blurhash integration tests', () => {
       )
 
       const results = await Promise.all(
-        images.map(image => transform!(image))
+        images.map(image => transform!(image as any))
       )
 
       expect(results).toHaveLength(10)
