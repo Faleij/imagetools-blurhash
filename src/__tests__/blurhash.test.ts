@@ -45,10 +45,11 @@ describe('blurhash plugin', () => {
   })
 
   describe('plugin factory', () => {
-    it('should return undefined when blurhash is empty string', () => {
+    it('should return transform function when blurhash is empty string', () => {
       const factory = blurhash()
       const result = factory({ blurhash: '' }, {} as any)
-      expect(result).toBeUndefined()
+      expect(result).toBeDefined()
+      expect(typeof result).toBe('function')
     })
 
     it('should return undefined when blurhash is false', () => {
@@ -502,10 +503,11 @@ describe('blurhash plugin', () => {
       expect(encode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 32, 16, 3, 3)
     })
 
-    it('should return undefined when blurhash is empty', () => {
+    it('should return transform function when blurhash is empty', () => {
       const factory = blurhash()
       const result = factory({ blurhash: '' }, {} as any)
-      expect(result).toBeUndefined()
+      expect(result).toBeDefined()
+      expect(typeof result).toBe('function')
     })
   })
 })

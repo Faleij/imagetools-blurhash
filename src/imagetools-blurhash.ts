@@ -59,19 +59,19 @@ export function blurhash(defaultConfig: BlurhashConfig = {}): BlurhashTransformF
       ? `${options.blurhash},${options.blurhash}` 
       : options.blurhash;
     // Merge user options with defaults
-    const finalBlurhash = blurhash ?? (defaultConfig.always ? 'true' : '');
+    const finalBlurhash = blurhash ?? (defaultConfig.always ? 'true' : undefined);
     
 
     // Check if blurhash is disabled
-    if (finalBlurhash === '' || finalBlurhash === 'false') {
+    if (finalBlurhash === undefined || finalBlurhash === 'false') {
       return;
     }
 
     // Parse components from blurhash parameter
     let finalComponents: number | [number, number] | string;
     
-    if (finalBlurhash === 'true') {
-      // Use default components when blurhash is 'true'
+    if (finalBlurhash === 'true' || finalBlurhash === '') {
+      // Use default components when blurhash is 'true' or empty string
       finalComponents = defaultConfig.components ?? 4;
     } else {
       // Use the blurhash value as components
